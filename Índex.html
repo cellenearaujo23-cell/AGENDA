@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="EstéticaPro">
+<title>EstéticaPro 🌸</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F0F2F5;color:#0F172A;}
+button{font-family:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+input,textarea,select{font-family:inherit;-webkit-appearance:none;}
+::-webkit-scrollbar{display:none;}
+#app{max-width:500px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;position:relative;}
+.screen{flex:1;overflow-y:auto;padding-bottom:72px;}
+.screen.no-tab{padding-bottom:0;}
+.hdr{background:#fff;border-bottom:1px solid #E8EAED;position:sticky;top:0;z-index:60;}
+.hdr-safe{height:env(safe-area-inset-top,0px);}
+.hdr-row{display:flex;align-items:center;padding:10px 16px;min-height:52px;}
+.hdr-left{width:70px;flex-shrink:0;}
+.hdr-center{flex:1;text-align:center;}
+.hdr-right{width:70px;flex-shrink:0;display:flex;justify-content:flex-end;align-items:center;}
+.hdr-title{font-size:16px;font-weight:900;letter-spacing:-0.3px;}
+.hdr-sub{font-size:11px;color:#94A3B8;margin-top:1px;}
+.hdr-saved{text-align:center;font-size:10px;color:#16A34A;font-weight:700;padding-bottom:5px;}
+.back-btn{display:flex;align-items:center;gap:4px;background:none;border:none;color:#2563EB;font-weight:700;font-size:15px;padding:6px 0;}
+.back-btn span{font-size:22px;line-height:1;}
+.logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#2563EB,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:15px;}
+.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;background:#fff;border-top:1px solid #E8EAED;display:flex;padding:6px 0;padding-bottom:env(safe-area-inset-bottom,6px);z-index:50;}
+.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:none;padding:4px 0;font-size:10px;font-weight:700;}
+.tab-btn .ic{font-size:20px;}
+.tab-dot{width:4px;height:4px;border-radius:50%;background:#2563EB;}
+.card{background:#fff;border-radius:16px;border:1.5px solid #F1F5F9;margin-bottom:12px;overflow:hidden;}
+.card-pad{padding:14px 16px;}
+.row{display:flex;align-items:center;gap:12px;}
+.row-border{border-top:1px solid #F8F9FB;}
+.irow{display:flex;align-items:flex-start;gap:12px;padding:11px 16px;}
+.irow-icon{font-size:15px;margin-top:1px;}
+.irow-label{font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;}
+.irow-val{font-size:14px;color:#1E293B;font-weight:600;margin-top:2px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;font-weight:700;color:#64748B;margin-bottom:6px;}
+.field input,.field textarea,.field select{width:100%;padding:11px 14px;background:#F8F9FB;border:1.5px solid #E2E8F0;border-radius:12px;font-size:15px;color:#1E293B;outline:none;}
+.field textarea{resize:none;}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.chip-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.chip{padding:6px 12px;border-radius:10px;border:1.5px solid #E2E8F0;background:#fff;color:#64748B;font-weight:700;font-size:12px;margin-bottom:2px;}
+.chip.active{border-color:var(--cc);background:color-mix(in srgb,var(--cc) 12%,#fff);color:var(--cc);}
+.dot-pick{display:flex;gap:8px;margin-top:6px;}
+.dot-btn{width:28px;height:28px;border-radius:50%;border:3px solid transparent;cursor:pointer;}
+.dot-btn.active{border-color:#0F172A;}
+.btn{width:100%;padding:14px;border:none;border-radius:14px;font-size:16px;font-weight:900;cursor:pointer;}
+.btn-blue{background:#2563EB;color:#fff;}
+.btn-green{background:#16A34A;color:#fff;}
+.btn-purple{background:#7C3AED;color:#fff;}
+.btn-red{background:#FFF1F2;border:1.5px solid #FECDD3;color:#E11D48;}
+.btn-disabled{background:#E2E8F0;color:#94A3B8;cursor:default;}
+.sticky-btn{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;padding:12px 16px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid #E8EAED;z-index:50;}
+.cal-grid-hdr{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-cell{border-radius:12px;min-height:62px;padding:5px 4px;border:2px solid transparent;cursor:pointer;}
+.cal-cell.today{background:#EFF6FF;border-color:#2563EB;}
+.cal-cell.selected{background:#F8F9FB;border-color:#CBD5E1;}
+.cal-cell.normal{background:#fff;}
+.cal-num{text-align:center;font-size:13px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 3px;}
+.week-day-btn{padding:6px 2px 7px;border-radius:11px;border:1.5px solid transparent;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:700;text-transform:uppercase;}
+.week-num{font-size:15px;font-weight:900;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.tslot{border-radius:12px;border:1.5px solid #F1F5F9;background:#fff;cursor:pointer;}
+.tslot.now{border-color:rgba(37,99,235,.3);background:rgba(239,246,255,.4);}
+.appt-block{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:9px;margin-bottom:4px;cursor:pointer;}
+.badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;}
+.status-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;}
+.allergy{padding:10px 14px;background:#FFF1F2;border-radius:12px;font-size:13px;color:#E11D48;font-weight:700;margin-bottom:12px;}
+.fin-hero{background:linear-gradient(135deg,#2563EB,#7C3AED);border-radius:18px;padding:20px;margin-bottom:16px;color:#fff;}
+.fin-hero-val{font-size:30px;font-weight:900;letter-spacing:-1px;}
+.fin-hero-sub{font-size:12px;opacity:.7;margin-top:4px;}
+.sum-card{background:var(--bg);border-radius:16px;padding:14px 16px;}
+.sum-card-val{font-size:18px;font-weight:900;color:var(--cc);letter-spacing:-.5px;}
+.sum-card-label{font-size:12px;font-weight:700;color:var(--cc);opacity:.7;margin-top:2px;}
+.sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.sum-span{grid-column:1/-1;}
+.progress-bar{height:6px;border-radius:6px;background:#F1F5F9;overflow:hidden;}
+.progress-fill{height:100%;border-radius:6px;}
+.fin-tabs{display:flex;border-bottom:1px solid #E8EAED;background:#fff;}
+.fin-tab{flex:1;padding:9px 0 10px;border:none;background:none;font-weight:700;font-size:12px;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;}
+.empty{text-align:center;padding:20px 0;color:#CBD5E1;font-size:13px;font-weight:600;}
+.posop{border-radius:16px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;border:1.5px solid;}
+.posop-num{font-size:32px;font-weight:900;line-height:1;}
+.posop-title{font-size:14px;font-weight:800;}
+.posop-sub{font-size:12px;color:#64748B;margin-top:2px;}
+.cl-card{background:#fff;border-radius:16px;padding:14px;margin-bottom:10px;border:1.5px solid #F1F5F9;cursor:pointer;display:block;width:100%;text-align:left;}
+.arow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #F8F9FB;cursor:pointer;}
+.arow-time{width:40px;height:40px;border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+.evol-item{padding:10px 16px;border-top:1px solid #F8F9FB;border-left:3px solid;}
+.evol-hdr{display:flex;justify-content:space-between;margin-bottom:3px;}
+.evol-text{font-size:13px;color:#334155;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="hdr" id="hdr">
+    <div class="hdr-safe"></div>
+    <div class="hdr-row">
+      <div class="hdr-left" id="hdr-left"></div>
+      <div class="hdr-center">
+        <div class="hdr-title" id="hdr-title">EstéticaPro</div>
+        <div class="hdr-sub" id="hdr-sub" style="display:none"></div>
+      </div>
+      <div class="hdr-right" id="hdr-right"></div>
+    </div>
+    <div class="hdr-saved" id="hdr-saved" style="display:none">✓ salvo automaticamente</div>
+  </div>
+  <div class="screen" id="screen"></div>
+  <div class="tabs" id="tabs">
+    <button class="tab-btn" onclick="goTab('agenda')" id="t-agenda"><span class="ic">📅</span><span id="tl-agenda" style="color:#2563EB">Agenda</span><div class="tab-dot"></div></button>
+    <button class="tab-btn" onclick="goTab('clientes')" id="t-clientes"><span class="ic">👤</span><span id="tl-clientes" style="color:#94A3B8">Clientes</span></button>
+    <button class="tab-btn" onclick="goTab('financeiro')" id="t-financeiro"><span class="ic">💰</span><span id="tl-financeiro" style="color:#94A3B8">Finanças</span></button>
+    <button class="tab-btn" onclick="goTab('config')" id="t-config"><span class="ic">⚙️</span><span id="tl-config" style="color:#94A3B8">Config</span></button>
+  </div>
+</div>
+<script>
+var DAYS=["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+var DAYS_F=["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+var MONTHS=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+var MTHS=["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+var HRS=[7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+var DOTS=["#2563EB","#16A34A","#DC2626","#D97706","#7C3AED","#0891B2","#BE185D","#059669"];
+var PROCS=["Lipoaspiração","Abdominoplastia","Rinoplastia","Mamoplastia","Lifting facial","Bichectomia","Blefaroplastia","Gluteoplastia","Outro"];
+var SERVS=["Drenagem linfática","Radiofrequência","Ultrassom","Massagem modeladora","Pós operatório","Limpeza de pele","Microagulhamento","Avaliação","Retorno","Outro"];
+var STATUS=[{v:"agendada",l:"Agendada",c:"#2563EB",b:"#EFF6FF"},{v:"realizada",l:"Realizada",c:"#16A34A",b:"#F0FDF4"},{v:"cancelada",l:"Cancelada",c:"#E11D48",b:"#FFF1F2"},{v:"reagendada",l:"Reagendada",c:"#D97706",b:"#FFFBEB"}];
+var appts=[],pkgs=[],clients=[];
+var tab="agenda",stack=[];
+var calView="month",curDate=new Date();
+var today=new Date();
+var savedTimer=null;
+function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36);}
+function same(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+function dstr(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function tstr(d){return pad(d.getHours())+":"+pad(d.getMinutes());}
+function pad(n){return String(n).padStart(2,"0");}
+function ddays(a,b){return Math.floor((b-a)/86400000);}
+function money(v){return"R$ "+Number(v||0).toLocaleString("pt-BR",{minimumFractionDigits:2});}
+function dayA(date){return appts.filter(function(a){return same(a.date,date);}).sort(function(a,b){return a.date-b.date;});}
+function getStatus(v){return STATUS.find(function(s){return s.v===v;})||STATUS[0];}
+var KEYS={a:["ag9a","ag_v8","ag_v7","ag_a_v6","ag_a_v5"],p:["ag9p","ag_p8","ag_p7","ag_p_v6"],c:["ag9c","ag_c8","ag_c7","ag_c_v6"]};
+function loadStorage(){
+  function tryLoad(keys){for(var i=0;i<keys.length;i++){var v=localStorage.getItem(keys[i]);if(v)return v;}return null;}
+  try{
+    var ra=tryLoad(KEYS.a),rp=tryLoad(KEYS.p),rc=tryLoad(KEYS.c);
+    appts=ra?JSON.parse(ra).map(function(a){return Object.assign({},a,{date:new Date(a.date)});}):[];
+    pkgs=rp?JSON.parse(rp):[];
+    clients=rc?JSON.parse(rc):[];
+  }catch(e){appts=[];pkgs=[];clients=[];}
+}
+function saveStorage(){
+  try{
+    localStorage.setItem("ag9a",JSON.stringify(appts.map(function(a){return Object.assign({},a,{date:a.date.toISOString()});})));
+    localStorage.setItem("ag9p",JSON.stringify(pkgs));
+    localStorage.setItem("ag9c",JSON.stringify(clients));
+    var s=document.getElementById("hdr-saved");
+    if(s){s.style.display="block";clearTimeout(savedTimer);savedTimer=setTimeout(function(){s.style.display="none";},2000);}
+  }catch(e){}
+}
+function push(s){stack.push(s);render();}
+function pop(){stack.pop();render();}
+function goTab(t){stack=[];tab=t;render();}
+function screen(){return stack.length?stack[stack.length-1]:null;}
+function render(){
+  var s=screen();
+  var tabsEl=document.getElementById("tabs");
+  var screenEl=document.getElementById("screen");
+  if(s){tabsEl.style.display="none";screenEl.className="screen no-tab";}
+  else{
+    tabsEl.style.display="flex";screenEl.className="screen";
+    ["agenda","clientes","financeiro","config"].forEach(function(t){
+      document.getElementById("tl-"+t).style.color=tab===t?"#2563EB":"#94A3B8";
+      var btn=document.getElementById("t-"+t);
+      var dot=btn.querySelector(".tab-dot");
+      if(dot)dot.style.display=tab===t?"block":"none";
+    });
+  }
+  if(s){
+    if(s.t==="apptDetail")renderApptDetail(s);
+    else if(s.t==="apptForm")renderApptForm(s);
+    else if(s.t==="clientDetail")renderClientDetail(s);
+    else if(s.t==="clientForm")renderClientForm(s);
+    else if(s.t==="pkgDetail")renderPkgDetail(s);
+    else if(s.t==="pkgForm")renderPkgForm(s);
+    else if(s.t==="backup")renderBackup();
+  }else{
+    if(tab==="agenda")renderAgenda();
+    else if(tab==="clientes")renderClients();
+    else if(tab==="financeiro")renderFinanceiro();
+    else if(tab==="config")renderConfig();
+  }
+}
+function setHeader(title,sub,backFn,rightHtml){
+  document.getElementById("hdr-title").textContent=title;
+  var subEl=document.getElementById("hdr-sub");
+  if(sub){subEl.style.display="block";subEl.textContent=sub;}else{subEl.style.display="none";}
+  var leftEl=document.getElementById("hdr-left");
+  if(backFn){leftEl.innerHTML='<button class="back-btn" id="back-btn"><span>‹</span><span style="font-size:14px">Voltar</span></button>';document.getElementById("back-btn").onclick=backFn;}
+  else{leftEl.innerHTML='<div class="logo">🌸</div>';}
+  var rightEl=document.getElementById("hdr-right");
+  rightEl.innerHTML=rightHtml||"";
+}
+function renderAgenda(){
+  var wDays=getWeekDays();
+  var titleMap={month:MONTHS[curDate.getMonth()]+" "+curDate.getFullYear(),week:wDays[0].getDate()+" "+MTHS[wDays[0].getMonth()]+" – "+wDays[6].getDate()+" "+MTHS[wDays[6].getMonth()],day:DAYS_F[curDate.getDay()]+", "+curDate.getDate()+" "+MTHS[curDate.getMonth()]};
+  setHeader(titleMap[calView],null,null,'<button onclick="push({t:\'apptForm\',prefDate:\''+dstr(curDate)+'\',prefTime:\''+pad(Math.max(7,today.getHours()))+':00\'})" style="width:34px;height:34px;border-radius:10px;background:#2563EB;border:none;color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;">+</button>');
+  var html='<div style="background:#fff;border-bottom:1px solid #E8EAED;padding:10px 16px 12px">';
+  html+='<div style="display:flex;gap:6px;margin-bottom:10px">';
+  [["month","Mês"],["week","Semana"],["day","Dia"]].forEach(function(item){
+    var active=calView===item[0];
+    html+='<button onclick="calView=\''+item[0]+'\';render()" style="flex:1;padding:7px 0;border-radius:10px;border:1.5px solid '+(active?"#2563EB":"#E2E8F0")+';background:'+(active?"#2563EB":"#fff")+';color:'+(active?"#fff":"#64748B")+';font-weight:800;font-size:13px;">'+item[1]+'</button>';
+  });
+  html+='</div><div style="display:flex;align-items:center;gap:8px">';
+  html+='<button onclick="navCal(-1)" style="width:34px;height:34px;border-radius:9px;background:#F1F5F9;border:none;color:#334155;font-size:18px;font-weight:700;">‹</button>';
+  html+='<button onclick="curDate=new Date();render()" style="flex:1;padding:6px 0;border-radius:9px;background:#EFF6FF;border:1px solid rgba(37,99,235,.2);color:#2563EB;font-weight:800;font-size:13px;">Hoje</button>';
+  html+='<button onclick="navCal(1)" style="width:34px;height:34px;border-radius:9px;background:#F1F5F9;border:none;color:#334155;font-size:18px;font-weight:700;">›</button>';
+  html+='</div></div>';
+  if(calView==="month")html+=renderMonth();
+  else if(calView==="week")html+=renderWeek(wDays);
+  else html+=renderDay();
+  document.getElementById("screen").innerHTML=html;
+}
+function navCal(dir){
+  var d=new Date(curDate);
+  if(calView==="month")d.setMonth(d.getMonth()+dir);
+  else if(calView==="week")d.setDate(d.getDate()+dir*7);
+  else d.setDate(d.getDate()+dir);
+  curDate=d;render();
+}
+function getWeekDays(){
+  var s=new Date(curDate);s.setDate(s.getDate()-s.getDay());s.setHours(0,0,0,0);
+  var arr=[];for(var i=0;i<7;i++){var d=new Date(s);d.setDate(s.getDate()+i);arr.push(d);}return arr;
+}
+function getMonthDays(){
+  var y=curDate.getFullYear(),m=curDate.getMonth();
+  var first=new Date(y,m,1).getDay(),total=new Date(y,m+1,0).getDate(),cells=[];
+  for(var i=0;i<first;i++)cells.push(null);
+  for(var i=1;i<=total;i++)cells.push(new Date(y,m,i));
+  return cells;
+}
+function renderMonth(){
+  var cells=getMonthDays();
+  var html='<div style="padding:12px 14px">';
+  html+='<div class="cal-grid-hdr">';
+  DAYS.forEach(function(d){html+='<div style="text-align:center;font-size:11px;font-weight:700;color:#94A3B8;padding-bottom:6px;text-transform:uppercase">'+d+'</div>';});
+  html+='</div><div class="cal-grid">';
+  cells.forEach(function(date,i){
+    if(!date){html+='<div></div>';return;}
+    var da=dayA(date),tod=same(date,today),isSel=same(date,curDate)&&!tod;
+    var cls=tod?"today":isSel?"selected":"normal";
+    html+='<div class="cal-cell '+cls+'" onclick="curDate=new Date('+date.getTime()+');render()">';
+    html+='<div class="cal-num" style="background:'+(tod?"#2563EB":"transparent")+';color:'+(tod?"#fff":"#1E293B")+';font-weight:'+(tod?900:500)+'">'+date.getDate()+'</div>';
+    da.slice(0,2).forEach(function(a){html+='<div onclick="event.stopPropagation();push({t:\'apptDetail\',id:\''+a.id+'\'})" style="font-size:9px;font-weight:700;color:'+a.color+';background:'+a.color+'22;border-radius:4px;padding:2px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4;margin-bottom:2px">'+tstr(a.date)+" "+a.name.split(" ")[0]+'</div>';});
+    if(da.length>2)html+='<div style="font-size:9px;color:#94A3B8;font-weight:700;text-align:center">+'+(da.length-2)+'</div>';
+    html+='</div>';
+  });
+  html+='</div>';
+  html+='<div class="card" style="margin-top:16px"><div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px"><div><div style="font-size:15px;font-weight:900">'+(same(curDate,today)?"Hoje":DAYS_F[curDate.getDay()])+'</div><div style="font-size:12px;color:#94A3B8">'+curDate.getDate()+' de '+MONTHS[curDate.getMonth()]+'</div></div>';
+  html+='<button onclick="push({t:\'apptForm\',prefDate:\''+dstr(curDate)+'\',prefTime:\''+pad(Math.max(7,today.getHours()))+':00\'})" style="padding:6px 12px;border-radius:9px;background:#2563EB;border:none;color:#fff;font-weight:800;font-size:12px;">+ Adicionar</button></div>';
+  html+='<div style="padding:0 16px 14px">';
+  var da=dayA(curDate);
+  if(!da.length)html+='<div class="empty">Nenhum agendamento</div>';
+  else da.forEach(function(a){html+=apptRowHTML(a);});
+  html+='</div></div></div>';
+  return html;
+}
+function renderWeek(wDays){
+  var html='<div><div style="background:#fff;border-bottom:1px solid #E8EAED;padding:10px 12px"><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">';
+  wDays.forEach(function(d,i){
+    var tod=same(d,today),isSel=same(d,curDate),cnt=dayA(d).length;
+    html+='<button onclick="curDate=new Date('+d.getTime()+');render()" class="week-day-btn" style="border:1.5px solid '+(isSel?"#2563EB":tod?"#CBD5E1":"transparent")+';background:'+(isSel?"#EFF6FF":tod?"#F8FAFC":"transparent")+';color:'+(isSel?"#2563EB":tod?"#64748B":"#94A3B8")+'">';
+    html+=DAYS[d.getDay()]+'<span class="week-num" style="background:'+(tod&&!isSel?"rgba(37,99,235,.12)":"transparent")+';color:'+(isSel?"#2563EB":tod?"#1E293B":"#334155")+'">'+d.getDate()+'</span>';
+    html+='<span style="width:5px;height:5px;border-radius:50%;background:'+(cnt>0?(isSel?"#2563EB":"#CBD5E1"):"transparent")+'"></span></button>';
+  });
+  html+='</div></div><div style="padding:12px 14px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">';
+  html+='<div style="font-size:14px;font-weight:800">'+DAYS_F[curDate.getDay()]+', '+curDate.getDate()+' de '+MONTHS[curDate.getMonth()]+'</div>';
+  html+='<button onclick="push({t:\'apptForm\',prefDate:\''+dstr(curDate)+'\',prefTime:\''+pad(Math.max(7,today.getHours()))+':00\'})" style="padding:6px 12px;border-radius:9px;background:#2563EB;border:none;color:#fff;font-weight:800;font-size:12px;">+ Adicionar</button></div>';
+  html+=timelineHTML(curDate,54);
+  html+='</div></div>';
+  return html;
+}
+function renderDay(){
+  var cnt=dayA(curDate).length;
+  var html='<div style="padding:12px 14px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">';
+  html+='<div style="font-size:13px;color:#64748B;font-weight:600">'+cnt+' agendamento'+(cnt!==1?"s":"")+'</div>';
+  html+='<button onclick="push({t:\'apptForm\',prefDate:\''+dstr(curDate)+'\',prefTime:\''+pad(Math.max(7,today.getHours()))+':00\'})" style="padding:6px 12px;border-radius:9px;background:#2563EB;border:none;color:#fff;font-weight:800;font-size:12px;">+ Adicionar</button></div>';
+  html+=timelineHTML(curDate,66);
+  html+='</div>';
+  return html;
+}
+function timelineHTML(date,h){
+  var html='';
+  HRS.forEach(function(hr){
+    var sa=appts.filter(function(a){return same(a.date,date)&&a.date.getHours()===hr;}).sort(function(a,b){return a.date.getMinutes()-b.date.getMinutes();});
+    var isNow=same(date,today)&&today.getHours()===hr;
+    html+='<div style="display:flex;gap:10px;margin-bottom:4px"><div style="width:38px;flex-shrink:0;padding-top:10px;text-align:right;font-size:12px;font-weight:700;color:'+(isNow?"#2563EB":"#CBD5E1")+'">'+pad(hr)+'h</div>';
+    html+='<div class="tslot '+(isNow?"now":"")+'" style="flex:1;min-height:'+h+'px;padding:'+(sa.length?"6px":"0")+'" onclick="'+(sa.length?"":"push({t:\'apptForm\',prefDate:\'"+dstr(date)+"\',prefTime:\'"+pad(hr)+":00\'})")+'">';
+    if(!sa.length)html+='<div style="height:100%;min-height:'+h+'px;display:flex;align-items:center;padding-left:14px;color:'+(isNow?"rgba(37,99,235,.5)":"#E8EAED")+';font-size:12px;font-weight:600">'+(isNow?"← agora":"")+'</div>';
+    sa.forEach(function(a){
+      var cl=clients.find(function(c){return c.id===a.clientId;});
+      var ds=cl&&cl.surgeryDate?ddays(new Date(cl.surgeryDate),new Date()):null;
+      html+='<div class="appt-block" style="background:'+a.color+'12;border-left:4px solid '+a.color+'" onclick="event.stopPropagation();push({t:\'apptDetail\',id:\''+a.id+'\'})">';
+      html+='<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+a.name+'</div>';
+      html+='<div style="display:flex;gap:5px;margin-top:2px;flex-wrap:wrap">';
+      if(a.service)html+='<span style="font-size:11px;color:#64748B">'+a.service+'</span>';
+      if(a.sessionNum)html+='<span class="badge" style="background:#F1F5F9;color:#64748B">S'+a.sessionNum+'</span>';
+      if(ds!==null&&ds>=0)html+='<span class="badge" style="background:#EFF6FF;color:#2563EB">'+ds+'º pós</span>';
+      html+='</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:14px;font-weight:900;color:'+a.color+'">'+tstr(a.date)+'</div><div style="font-size:10px;color:#94A3B8">'+a.duration+'min</div>';
+      var st=getStatus(a.status);
+      if(a.status&&a.status!=="agendada")html+='<span class="status-badge" style="background:'+st.b+';color:'+st.c+'">'+st.l+'</span>';
+      html+='</div></div>';
+    });
+    html+='</div></div>';
+  });
+  return html;
+}
+function apptRowHTML(a){
+  var cl=clients.find(function(c){return c.id===a.clientId;});
+  var ds=cl&&cl.surgeryDate?ddays(new Date(cl.surgeryDate),new Date()):null;
+  var html='<div class="arow" onclick="push({t:\'apptDetail\',id:\''+a.id+'\'})">';
+  html+='<div class="arow-time" style="background:'+a.color+'15"><div style="font-size:12px;font-weight:900;color:'+a.color+';line-height:1">'+tstr(a.date)+'</div><div style="font-size:9px;color:'+a.color+';opacity:.6">'+a.duration+'m</div></div>';
+  html+='<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:800">'+a.name+'</div>';
+  html+='<div style="display:flex;gap:5px;margin-top:2px;flex-wrap:wrap">';
+  if(a.service)html+='<span style="font-size:11px;color:#64748B">'+a.service+'</span>';
+  if(a.sessionNum)html+='<span class="badge" style="background:#F1F5F9;color:#64748B">S'+a.sessionNum+'</span>';
+  if(ds!==null&&ds>=0)html+='<span class="badge" style="background:#EFF6FF;color:#2563EB">'+ds+'º pós</span>';
+  html+='</div></div><span style="color:#E2E8F0;font-size:18px;flex-shrink:0">›</span></div>';
+  return html;
+}
+function irowHTML(icon,label,val,border){
+  return'<div class="irow'+(border?" row-border":"")+'" ><span class="irow-icon">'+icon+'</span><div><div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px">'+label+'</div><div class="irow-val">'+val+'</div></div></div>';
+}
+function renderApptDetail(s){
+  var a=appts.find(function(x){return x.id===s.id;});
+  if(!a){setHeader("Agendamento",null,pop);document.getElementById("screen").innerHTML='<div style="padding:20px;color:#94A3B8">Não encontrado.</div>';return;}
+  var cl=clients.find(function(c){return c.id===a.clientId;});
+  var pkg=pkgs.find(function(p){return p.id===a.pkgId;});
+  var st=getStatus(a.status);
+  setHeader(a.name,a.service||"Agendamento",pop,'<button onclick="push({t:\'apptForm\',editId:\''+a.id+'\'})" style="background:#EFF6FF;border:none;border-radius:9px;padding:6px 14px;color:#2563EB;font-weight:800;font-size:13px;">Editar</button>');
+  var html='<div style="padding:14px 16px;padding-bottom:30px">';
+  html+='<div class="card" style="margin-bottom:14px"><div style="height:5px;background:'+a.color+'"></div><div style="padding:14px 16px;display:flex;align-items:center;gap:12px"><div style="width:46px;height:46px;border-radius:13px;background:'+a.color+'22;display:flex;align-items:center;justify-content:center;font-size:20px">👤</div><div><div style="font-size:18px;font-weight:900">'+a.name+'</div>'+(a.service?'<div style="font-size:13px;color:'+a.color+';font-weight:700;margin-top:1px">'+a.service+'</div>':'')+'</div></div></div>';
+  html+='<div class="card" style="margin-bottom:14px">';
+  html+=irowHTML("📅","Data",a.date.getDate()+" de "+MONTHS[a.date.getMonth()]+", "+a.date.getFullYear(),false);
+  html+=irowHTML("🕐","Horário",tstr(a.date)+" · "+a.duration+" minutos",true);
+  if(a.phone)html+=irowHTML("📞","Telefone",a.phone,true);
+  if(a.sessionNum)html+=irowHTML("🔢","Sessão","Nº "+a.sessionNum+(cl&&cl.totalSessionsPlanned?" de "+cl.totalSessionsPlanned:""),true);
+  if(pkg)html+=irowHTML("📦","Pacote",pkg.usedSessions+"/"+pkg.totalSessions+" sessões · "+money(pkg.totalValue),true);
+  html+=irowHTML("🔖","Status",st.l,true);
+  if(a.notes)html+=irowHTML("📝","Observações",a.notes,true);
+  html+='</div>';
+  if(a.type==="avulsa"&&a.value){
+    html+='<div class="card card-pad" style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">';
+    html+='<div><div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Valor</div><div style="font-size:22px;font-weight:900;color:'+(a.paid?"#16A34A":"#D97706")+'">'+money(a.value)+'</div></div>';
+    html+='<button onclick="togglePaid(\''+a.id+'\')" style="padding:10px 18px;border-radius:12px;border:none;background:'+(a.paid?"#F0FDF4":"#FFFBEB")+';color:'+(a.paid?"#16A34A":"#D97706")+';font-weight:800;font-size:14px;">'+(a.paid?"✅ Pago":"⏳ Marcar Pago")+'</button></div>';
+  }
+  if(cl&&cl.allergies)html+='<div class="allergy">⚠️ Alergia: '+cl.allergies+'</div>';
+  if(cl)html+='<button onclick="push({t:\'clientDetail\',id:\''+cl.id+'\'})" style="width:100%;padding:13px 16px;background:#F5F3FF;border:1px solid rgba(124,58,237,.15);border-radius:14px;color:#7C3AED;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;text-align:left"><span>👤 Ver ficha de '+cl.name.split(" ")[0]+'</span><span style="font-size:18px">›</span></button>';
+  html+='<button class="btn btn-red" onclick="removeAppt(\''+a.id+'\')">🗑 Cancelar Agendamento</button></div>';
+  document.getElementById("screen").innerHTML=html;
+}
+function togglePaid(id){appts=appts.map(function(a){return a.id===id?Object.assign({},a,{paid:!a.paid}):a;});saveStorage();push({t:"apptDetail",id:id});stack.splice(stack.length-2,1);render();}
+function removeAppt(id){
+  var a=appts.find(function(x){return x.id===id;});
+  appts=appts.filter(function(x){return x.id!==id;});
+  if(a&&a.type==="pacote"&&a.pkgId)pkgs=pkgs.map(function(p){return p.id===a.pkgId?Object.assign({},p,{usedSessions:Math.max(0,p.usedSessions-1)}):p;});
+  saveStorage();stack=[];tab="agenda";render();
+}
+var apptForm={};
+function renderApptForm(s){
+  var ex=s.editId?appts.find(function(a){return a.id===s.editId;}):null;
+  apptForm=ex?{clientId:ex.clientId||"",name:ex.name,phone:ex.phone||"",service:ex.service||"",date:dstr(ex.date),time:tstr(ex.date),duration:String(ex.duration),color:ex.color,notes:ex.notes||"",type:ex.type||"avulsa",value:ex.value||"",paid:ex.paid||false,pkgId:ex.pkgId||"",sessionNum:ex.sessionNum||"",status:ex.status||"agendada"}:{clientId:"",name:"",phone:"",service:"",date:s.prefDate||dstr(today),time:s.prefTime||"09:00",duration:"60",color:DOTS[appts.length%DOTS.length],notes:"",type:"avulsa",value:"",paid:false,pkgId:"",sessionNum:"",status:"agendada"};
+  setHeader(s.editId?"Editar Agendamento":"Novo Agendamento",null,pop);
+  renderApptFormHTML(s.editId||"");
+}
+function renderApptFormHTML(editId){
+  var f=apptForm;
+  var html='<div style="padding:14px 16px;padding-bottom:90px">';
+  if(clients.length){
+    html+='<div class="field"><label>Paciente cadastrada</label><div class="chip-wrap">';
+    html+='<button class="chip'+(!f.clientId?" active":"")+'" style="'+(!f.clientId?"--cc:#64748B":"")+'" onclick="apptForm.clientId=\'\';apptForm.name=\'\';apptForm.phone=\'\';renderApptFormHTML(\''+editId+'\')">Sem vínculo</button>';
+    clients.forEach(function(c){var act=f.clientId===c.id;html+='<button class="chip'+(act?" active":"")+'" style="--cc:'+c.color+'" onclick="apptForm.clientId=\''+c.id+'\';apptForm.name='+JSON.stringify(c.name)+';apptForm.phone='+JSON.stringify(c.phone||"")+';apptForm.color=\''+c.color+'\';renderApptFormHTML(\''+editId+'\')">'+c.name.split(" ")[0]+'</button>';});
+    html+='</div></div>';
+  }
+  if(!f.clientId){
+    html+='<div class="field"><label>Nome *</label><input type="text" value="'+esc(f.name)+'" oninput="apptForm.name=this.value" placeholder="Nome da paciente"></div>';
+    html+='<div class="field"><label>Telefone</label><input type="tel" value="'+esc(f.phone)+'" oninput="apptForm.phone=this.value" placeholder="(11) 99999-9999"></div>';
+  }
+  html+='<div class="field"><label>Serviço</label><div class="chip-wrap">';
+  SERVS.forEach(function(sv){html+='<button class="chip'+(f.service===sv?" active":"")+'" style="--cc:#2563EB" onclick="apptForm.service='+JSON.stringify(sv)+';renderApptFormHTML(\''+editId+'\')">'+sv+'</button>';});
+  html+='</div></div>';
+  html+='<div class="field-grid" style="margin-bottom:14px"><div class="field" style="margin-bottom:0"><label>Data *</label><input type="date" value="'+f.date+'" oninput="apptForm.date=this.value"></div><div class="field" style="margin-bottom:0"><label>Hora *</label><input type="time" value="'+f.time+'" oninput="apptForm.time=this.value"></div></div>';
+  html+='<div class="field"><label>Duração</label><div class="chip-wrap">';
+  [30,45,60,90,120].forEach(function(d){html+='<button class="chip'+(f.duration===String(d)?" active":"")+'" style="--cc:#2563EB" onclick="apptForm.duration=\''+d+'\';renderApptFormHTML(\''+editId+'\')">'+d+'min</button>';});
+  html+='</div></div>';
+  html+='<div class="field-grid" style="margin-bottom:14px"><div class="field" style="margin-bottom:0"><label>Nº da sessão</label><input type="number" value="'+esc(f.sessionNum)+'" oninput="apptForm.sessionNum=this.value" placeholder="Ex: 3"></div>';
+  html+='<div class="field" style="margin-bottom:0"><label>Tipo</label><div class="chip-wrap"><button class="chip'+(f.type==="avulsa"?" active":"")+'" style="--cc:#2563EB" onclick="apptForm.type=\'avulsa\';apptForm.pkgId=\'\';renderApptFormHTML(\''+editId+'\')">Avulsa</button><button class="chip'+(f.type==="pacote"?" active":"")+'" style="--cc:#16A34A" onclick="apptForm.type=\'pacote\';renderApptFormHTML(\''+editId+'\')">Pacote</button></div></div></div>';
+  if(f.type==="avulsa"){
+    html+='<div class="field-grid" style="margin-bottom:14px"><div class="field" style="margin-bottom:0"><label>Valor (R$)</label><input type="number" value="'+esc(f.value)+'" oninput="apptForm.value=this.value" placeholder="0,00"></div>';
+    html+='<div class="field" style="margin-bottom:0"><label>Pagamento</label><button onclick="apptForm.paid=!apptForm.paid;renderApptFormHTML(\''+editId+'\')" style="width:100%;padding:11px 10px;border-radius:12px;border:1.5px solid '+(f.paid?"#16A34A":"#E2E8F0")+';background:'+(f.paid?"#F0FDF4":"#F8F9FB")+';color:'+(f.paid?"#16A34A":"#94A3B8")+';font-weight:800;font-size:12px">'+(f.paid?"✅ Pago":"⏳")+'</button></div></div>';
+  }
+  if(f.type==="pacote"){
+    var ap=pkgs.filter(function(p){return p.active;});
+    html+='<div class="field"><label>Pacote</label>';
+    if(!ap.length)html+='<div style="padding:12px;background:#FFFBEB;border-radius:12px;font-size:13px;color:#D97706;font-weight:600">Crie um pacote na aba Financeiro.</div>';
+    else ap.forEach(function(p){html+='<div onclick="apptForm.pkgId=\''+p.id+'\';renderApptFormHTML(\''+editId+'\')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;border:1.5px solid '+(f.pkgId===p.id?"#2563EB":"#E2E8F0")+';background:'+(f.pkgId===p.id?"#EFF6FF":"#F8F9FB")+';cursor:pointer;margin-bottom:6px"><div style="width:10px;height:10px;border-radius:50%;background:'+p.color+'"></div><div style="flex:1"><div style="font-size:13px;font-weight:800">'+p.clientName+'</div><div style="font-size:11px;color:#94A3B8">'+p.usedSessions+'/'+p.totalSessions+' sessões</div></div>'+(f.pkgId===p.id?'<span style="color:#2563EB;font-weight:900">✓</span>':'')+'</div>';});
+    html+='</div>';
+  }
+  html+='<div class="field"><label>Status da sessão</label><div class="chip-wrap">';
+  STATUS.forEach(function(st){html+='<button class="chip'+(f.status===st.v?" active":"")+'" style="--cc:'+st.c+'" onclick="apptForm.status=\''+st.v+'\';renderApptFormHTML(\''+editId+'\')">'+st.l+'</button>';});
+  html+='</div></div>';
+  html+='<div class="field"><label>Cor</label><div class="dot-pick">';
+  DOTS.forEach(function(c){html+='<button class="dot-btn'+(f.color===c?" active":"")+'" style="background:'+c+'" onclick="apptForm.color=\''+c+'\';renderApptFormHTML(\''+editId+'\')"></button>';});
+  html+='</div></div>';
+  html+='<div class="field"><label>Observações</label><textarea oninput="apptForm.notes=this.value" placeholder="Informações adicionais…" rows="2">'+esc(f.notes)+'</textarea></div>';
+  html+='</div>';
+  var ok=f.name.trim()&&f.date&&f.time;
+  html+='<div class="sticky-btn"><button class="btn '+(ok?"btn-blue":"btn-disabled")+'" onclick="saveAppt(\''+editId+'\')">'+(editId?"Salvar Alterações":"Confirmar Agendamento")+'</button></div>';
+  document.getElementById("screen").innerHTML=html;
+}
+function saveAppt(editId){
+  var f=apptForm;
+  if(!f.name.trim()||!f.date||!f.time)return;
+  var parts=f.date.split("-"),tp=f.time.split(":");
+  var date=new Date(+parts[0],+parts[1]-1,+parts[2],+tp[0],+tp[1]);
+  var cid=f.clientId;
+  if(!editId&&!cid&&f.name.trim()){
+    var ex=clients.find(function(c){return c.name.toLowerCase()===f.name.trim().toLowerCase();});
+    if(ex)cid=ex.id;
+    else{cid=uid();clients.push({id:cid,name:f.name.trim(),phone:f.phone||"",birthdate:"",color:f.color,procedure:"",surgeryDate:"",surgeon:"",hospital:"",allergies:"",healthNotes:"",totalSessionsPlanned:"",evolution:[],createdAt:new Date().toISOString(),autoCreated:true});}
+  }
+  var data={clientId:cid,name:f.name,phone:f.phone,service:f.service,date:date,duration:+f.duration,color:f.color,notes:f.notes,type:f.type,value:f.value,paid:f.paid,pkgId:f.type==="pacote"?f.pkgId:"",sessionNum:f.sessionNum,status:f.status||"agendada"};
+  if(editId){appts=appts.map(function(a){return a.id===editId?Object.assign({},a,data):a;});}
+  else{appts.push(Object.assign({id:uid()},data));if(f.type==="pacote"&&f.pkgId)pkgs=pkgs.map(function(p){return p.id===f.pkgId?Object.assign({},p,{usedSessions:p.usedSessions+1}):p;});}
+  saveStorage();pop();
+}
+var clientSearch="";
+function renderClients(){
+  setHeader("Clientes",null,null,'<button onclick="push({t:\'clientForm\'})" style="width:34px;height:34px;border-radius:10px;background:#7C3AED;border:none;color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;">+</button>');
+  var filtered=clients.filter(function(c){return c.name.toLowerCase().indexOf(clientSearch.toLowerCase())>=0;});
+  var html='<div style="padding:12px 14px;padding-bottom:30px">';
+  html+='<input type="search" value="'+esc(clientSearch)+'" oninput="clientSearch=this.value;renderClients()" placeholder="🔍  Buscar paciente…" style="width:100%;padding:11px 14px;background:#fff;border:1.5px solid #E2E8F0;border-radius:12px;font-size:14px;color:#1E293B;outline:none;margin-bottom:12px">';
+  if(!filtered.length)html+='<div class="empty">Nenhuma paciente encontrada</div>';
+  filtered.forEach(function(cl){
+    var clA=appts.filter(function(a){return a.clientId===cl.id;});
+    var next=clA.filter(function(a){return a.date>=today;}).sort(function(a,b){return a.date-b.date;})[0];
+    var ds=cl.surgeryDate?ddays(new Date(cl.surgeryDate),today):null;
+    html+='<button class="cl-card" onclick="push({t:\'clientDetail\',id:\''+cl.id+'\'})">';
+    html+='<div class="row"><div style="width:44px;height:44px;border-radius:13px;background:'+cl.color+'18;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">👤</div>';
+    html+='<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:800">'+cl.name+'</div>';
+    html+='<div style="display:flex;gap:6px;margin-top:3px;flex-wrap:wrap">';
+    if(cl.procedure)html+='<span class="badge" style="background:'+cl.color+'18;color:'+cl.color+'">'+cl.procedure+'</span>';
+    if(ds!==null&&ds>=0)html+='<span style="font-size:11px;color:#64748B;font-weight:600">'+ds+'º dia pós-op</span>';
+    if(cl.autoCreated&&!cl.procedure)html+='<span class="badge" style="background:#F1F5F9;color:#94A3B8">Lead</span>';
+    html+='</div></div>';
+    html+='<div style="text-align:right;flex-shrink:0">';
+    if(next)html+='<div style="font-size:12px;font-weight:700;color:#2563EB">'+next.date.getDate()+" "+MTHS[next.date.getMonth()]+'</div><div style="font-size:10px;color:#94A3B8">próxima</div>';
+    else html+='<div style="font-size:11px;color:#CBD5E1">sem agenda</div>';
+    html+='<div style="font-size:18px;color:#E2E8F0;margin-top:2px">›</div></div></div>';
+    if(cl.allergies)html+='<div style="margin-top:8px;padding:5px 10px;background:#FFF1F2;border-radius:8px;font-size:11px;color:#E11D48;font-weight:700">⚠️ '+cl.allergies+'</div>';
+    html+='</button>';
+  });
+  html+='</div>';
+  document.getElementById("screen").innerHTML=html;
+}
+var evolNote="";
+function renderClientDetail(s){
+  var cl=clients.find(function(c){return c.id===s.id;});
+  if(!cl){setHeader("Paciente",null,pop);document.getElementById("screen").innerHTML='<div style="padding:20px;color:#94A3B8">Não encontrada.</div>';return;}
+  var clA=appts.filter(function(a){return a.clientId===cl.id;}).sort(function(a,b){return a.date-b.date;});
+  var ds=cl.surgeryDate?ddays(new Date(cl.surgeryDate),today):null;
+  var upcoming=clA.filter(function(a){return a.date>=today;});
+  setHeader(cl.name,cl.procedure||"Paciente",pop,'<button onclick="push({t:\'clientForm\',editId:\''+cl.id+'\'})" style="background:#F5F3FF;border:none;border-radius:9px;padding:6px 14px;color:#7C3AED;font-weight:800;font-size:13px;">Editar</button>');
+  var html='<div style="padding:14px 16px;padding-bottom:30px">';
+  if(ds!==null&&ds>=0)html+='<div class="posop" style="background:'+cl.color+'12;border-color:'+cl.color+'44"><div class="posop-num" style="color:'+cl.color+'">'+ds+'º</div><div><div class="posop-title">dia de pós-operatório</div><div class="posop-sub">'+(cl.surgeon?cl.surgeon+" · ":"")+new Date(cl.surgeryDate+"T12:00").toLocaleDateString("pt-BR")+'</div></div></div>';
+  if(cl.allergies)html+='<div class="allergy">⚠️ Alergia: '+cl.allergies+'</div>';
+  html+='<div class="card" style="margin-bottom:14px">';
+  if(cl.phone)html+=irowHTML("📞","Telefone",cl.phone,false);
+  if(cl.surgeon)html+=irowHTML("🏥","Cirurgião(ã)",cl.surgeon,!!cl.phone);
+  if(cl.hospital)html+=irowHTML("🏨","Local",cl.hospital,true);
+  if(cl.healthNotes)html+=irowHTML("💊","Saúde",cl.healthNotes,true);
+  html+='</div>';
+  if(cl.totalSessionsPlanned){
+    var pct=Math.min(100,Math.round(clA.length/Number(cl.totalSessionsPlanned)*100));
+    html+='<div class="card card-pad" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:#64748B">Progresso</span><span style="font-size:13px;font-weight:900;color:'+cl.color+'">'+clA.length+'/'+cl.totalSessionsPlanned+'</span></div><div class="progress-bar"><div class="progress-fill" style="background:'+cl.color+';width:'+pct+'%"></div></div></div>';
+  }
+  if(upcoming.length){
+    html+='<div class="card" style="margin-bottom:14px"><div style="padding:12px 16px 6px;font-size:13px;font-weight:800">Próximas sessões</div>';
+    upcoming.forEach(function(a){html+='<div onclick="push({t:\'apptDetail\',id:\''+a.id+'\'})" class="row row-border" style="padding:10px 16px;cursor:pointer"><div style="width:36px;height:36px;border-radius:10px;background:'+a.color+'15;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="font-size:11px;font-weight:900;color:'+a.color+';line-height:1">'+tstr(a.date)+'</div></div><div style="flex:1"><div style="font-size:13px;font-weight:700">'+a.date.getDate()+' '+MTHS[a.date.getMonth()]+' · '+a.service+'</div>'+(a.sessionNum?'<div style="font-size:11px;color:#94A3B8">Sessão '+a.sessionNum+'</div>':'')+'</div><span style="color:#E2E8F0;font-size:18px">›</span></div>';});
+    html+='</div>';
+  }
+  html+='<div class="card" style="margin-bottom:14px"><div style="padding:13px 16px 8px;font-size:13px;font-weight:800">📋 Evolução</div>';
+  var evols=(cl.evolution||[]).slice().reverse();
+  if(!evols.length)html+='<div style="padding:12px 16px;font-size:13px;color:#CBD5E1;font-weight:600">Nenhum registro ainda.</div>';
+  evols.forEach(function(ev){html+='<div class="evol-item" style="border-left-color:'+cl.color+'"><div class="evol-hdr"><span style="font-size:11px;font-weight:700;color:'+cl.color+'">Sessão '+ev.session+'</span><span style="font-size:11px;color:#94A3B8">'+new Date(ev.date).toLocaleDateString("pt-BR")+'</span></div><div class="evol-text">'+ev.notes+'</div></div>';});
+  html+='<div style="padding:12px 16px;border-top:1px solid #F8F9FB"><textarea id="evolNoteTA" oninput="evolNote=this.value" placeholder="Registrar evolução de hoje…" rows="2" style="width:100%;padding:10px 12px;background:#F8F9FB;border:1.5px solid #E2E8F0;border-radius:10px;font-size:13px;resize:none;outline:none;margin-bottom:8px">'+esc(evolNote)+'</textarea>';
+  html+='<button onclick="addEvol(\''+cl.id+'\')" style="width:100%;padding:10px;background:'+cl.color+';border:none;border-radius:10px;color:#fff;font-weight:800;font-size:13px;">+ Registrar Evolução</button></div></div>';
+  html+='<button class="btn btn-red" onclick="removeClient(\''+cl.id+'\')">🗑 Remover Paciente</button></div>';
+  document.getElementById("screen").innerHTML=html;
+}
+function addEvol(clientId){
+  var note=evolNote.trim();if(!note)return;
+  clients=clients.map(function(c){
+    if(c.id!==clientId)return c;
+    var n=(c.evolution||[]).length+1;
+    return Object.assign({},c,{evolution:(c.evolution||[]).concat([{id:uid(),date:new Date().toISOString(),session:n,notes:note}])});
+  });
+  evolNote="";saveStorage();push({t:"clientDetail",id:clientId});stack.splice(stack.length-2,1);render();
+}
+function removeClient(id){
+  clients=clients.filter(function(c){return c.id!==id;});
+  appts=appts.filter(function(a){return a.clientId!==id;});
+  pkgs=pkgs.filter(function(p){return p.clientId!==id;});
+  saveStorage();stack=[];tab="clientes";render();
+}
+var clientForm={};
+function renderClientForm(s){
+  var ex=s.editId?clients.find(function(c){return c.id===s.editId;}):null;
+  clientForm=ex?{name:ex.name,phone:ex.phone||"",birthdate:ex.birthdate||"",color:ex.color,procedure:ex.procedure||"",surgeryDate:ex.surgeryDate||"",surgeon:ex.surgeon||"",hospital:ex.hospital||"",allergies:ex.allergies||"",healthNotes:ex.healthNotes||"",totalSessionsPlanned:ex.totalSessionsPlanned||""}:{name:"",phone:"",birthdate:"",color:DOTS[0],procedure:"",surgeryDate:"",surgeon:"",hospital:"",allergies:"",healthNotes:"",totalSessionsPlanned:""};
+  setHeader(s.editId?"Editar Paciente":"Nova Paciente",null,pop);
+  renderClientFormHTML(s.editId||"");
+}
+function renderClientFormHTML(editId){
+  var f=clientForm;
+  var html='<div style="padding:14px 16px;padding-bottom:90px"><div style="display:flex;flex-direction:column;gap:14px">';
+  html+='<div class="field"><label>Nome completo *</label><input type="text" value="'+esc(f.name)+'" oninput="clientForm.name=this.value" placeholder="Nome da paciente"></div>';
+  html+='<div class="field-grid"><div class="field" style="margin-bottom:0"><label>Telefone</label><input type="tel" value="'+esc(f.phone)+'" oninput="clientForm.phone=this.value" placeholder="(11) 99999-9999"></div><div class="field" style="margin-bottom:0"><label>Nascimento</label><input type="date" value="'+f.birthdate+'" oninput="clientForm.birthdate=this.value"></div></div>';
+  html+='<div class="field"><label>Procedimento</label><div class="chip-wrap">';
+  PROCS.forEach(function(p){html+='<button class="chip'+(f.procedure===p?" active":"")+'" style="--cc:#7C3AED" onclick="clientForm.procedure='+JSON.stringify(p)+';renderClientFormHTML(\''+editId+'\')">'+p+'</button>';});
+  html+='</div></div>';
+  html+='<div class="field-grid"><div class="field" style="margin-bottom:0"><label>Data da cirurgia</label><input type="date" value="'+f.surgeryDate+'" oninput="clientForm.surgeryDate=this.value"></div><div class="field" style="margin-bottom:0"><label>Sessões previstas</label><input type="number" value="'+esc(f.totalSessionsPlanned)+'" oninput="clientForm.totalSessionsPlanned=this.value" placeholder="10"></div></div>';
+  html+='<div class="field"><label>Cirurgião(ã)</label><input type="text" value="'+esc(f.surgeon)+'" oninput="clientForm.surgeon=this.value" placeholder="Nome do médico"></div>';
+  html+='<div class="field"><label>Hospital / Clínica</label><input type="text" value="'+esc(f.hospital)+'" oninput="clientForm.hospital=this.value" placeholder="Local da cirurgia"></div>';
+  html+='<div class="field"><label style="color:#E11D48">⚠️ Alergias</label><input type="text" value="'+esc(f.allergies)+'" oninput="clientForm.allergies=this.value" placeholder="Ex: Dipirona, Látex…" style="background:#FFF1F2;border-color:rgba(225,29,72,.2)"></div>';
+  html+='<div class="field"><label>Obs. de saúde</label><textarea oninput="clientForm.healthNotes=this.value" placeholder="Ex: Hipertensa, diabética…" rows="2">'+esc(f.healthNotes)+'</textarea></div>';
+  html+='<div class="field"><label>Cor</label><div class="dot-pick">';
+  DOTS.forEach(function(c){html+='<button class="dot-btn'+(f.color===c?" active":"")+'" style="background:'+c+'" onclick="clientForm.color=\''+c+'\';renderClientFormHTML(\''+editId+'\')"></button>';});
+  html+='</div></div></div></div>';
+  var ok=f.name.trim();
+  html+='<div class="sticky-btn"><button class="btn '+(ok?"btn-purple":"btn-disabled")+'" onclick="saveClient(\''+editId+'\')">'+(editId?"Salvar Alterações":"Cadastrar Paciente")+'</button></div>';
+  document.getElementById("screen").innerHTML=html;
+}
+function saveClient(editId){
+  var f=clientForm;if(!f.name.trim())return;
+  if(editId){clients=clients.map(function(c){return c.id===editId?Object.assign({},c,f):c;});appts=appts.map(function(a){return a.clientId===editId?Object.assign({},a,{name:f.name,phone:f.phone,color:f.color}):a;});}
+  else{clients.push(Object.assign({id:uid(),evolution:[],createdAt:new Date().toISOString()},f));}
+  saveStorage();pop();
+}
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+var finTab="resumo";
+function renderFinanceiro(){
+  setHeader("Financeiro",null,null,'<button onclick="push({t:\'pkgForm\'})" style="width:34px;height:34px;border-radius:10px;background:#16A34A;border:none;color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;">+</button>');
+  var avulsas=appts.filter(function(a){return a.type==="avulsa";}).sort(function(a,b){return b.date-a.date;});
+  var totRec=appts.filter(function(a){return a.paid&&a.type==="avulsa";}).reduce(function(s,a){return s+Number(a.value||0);},0);
+  var totPend=appts.filter(function(a){return!a.paid&&a.type==="avulsa";}).reduce(function(s,a){return s+Number(a.value||0);},0);
+  var totAv=avulsas.reduce(function(s,a){return s+Number(a.value||0);},0);
+  var totPkg=pkgs.reduce(function(s,p){return s+Number(p.totalValue||0);},0);
+  var totPkgRec=pkgs.reduce(function(s,p){return s+(p.totalSessions>0?Number(p.usedSessions)*(Number(p.totalValue||0)/Number(p.totalSessions)):0);},0);
+  var html='<div style="background:#fff;border-bottom:1px solid #E8EAED"><div class="fin-tabs">';
+  [["resumo","📊 Resumo"],["avulsas","🎫 Avulsas"],["pacotes","📦 Pacotes"]].forEach(function(item){
+    html+='<button class="fin-tab" style="color:'+(finTab===item[0]?"#2563EB":"#94A3B8")+';border-bottom-color:'+(finTab===item[0]?"#2563EB":"transparent")+'" onclick="finTab=\''+item[0]+'\';renderFinanceiro()">'+item[1]+'</button>';
+  });
+  html+='</div></div><div style="padding:14px 14px;padding-bottom:30px">';
+  if(finTab==="resumo"){
+    html+='<div class="fin-hero"><div style="font-size:11px;font-weight:700;opacity:.75;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Total Geral</div><div class="fin-hero-val">'+money(totAv+totPkg)+'</div><div class="fin-hero-sub">avulsas + pacotes</div></div>';
+    html+='<div class="card" style="margin-bottom:12px"><div style="padding:13px 16px;border-bottom:1px solid #F8F9FB;display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:10px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:18px">🎫</div><div><div style="font-size:14px;font-weight:800">Sessões Avulsas</div><div style="font-size:11px;color:#94A3B8">'+avulsas.length+' sessão'+(avulsas.length!==1?"ões":"")+'</div></div></div><div style="text-align:right"><div style="font-size:16px;font-weight:900;color:#2563EB">'+money(totAv)+'</div><div style="font-size:10px;color:#94A3B8;margin-top:2px">total faturado</div></div></div>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr;padding:12px 16px;gap:12px"><div><div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Recebido</div><div style="font-size:16px;font-weight:900;color:#16A34A">'+money(totRec)+'</div></div><div><div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">A receber</div><div style="font-size:16px;font-weight:900;color:#D97706">'+money(totPend)+'</div></div></div></div>';
+    html+='<div class="card"><div style="padding:13px 16px;border-bottom:1px solid #F8F9FB;display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div style="width:36px;height:36px;border-radius:10px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:18px">📦</div><div><div style="font-size:14px;font-weight:800">Pacotes</div><div style="font-size:11px;color:#94A3B8">'+pkgs.length+' pacote'+(pkgs.length!==1?"s":"")+'</div></div></div><div style="text-align:right"><div style="font-size:16px;font-weight:900;color:#2563EB">'+money(totPkg)+'</div><div style="font-size:10px;color:#94A3B8;margin-top:2px">total vendido</div></div></div>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr;padding:12px 16px;gap:12px"><div><div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Utilizado</div><div style="font-size:16px;font-weight:900;color:#16A34A">'+money(totPkgRec)+'</div></div><div><div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Saldo</div><div style="font-size:16px;font-weight:900;color:#7C3AED">'+money(totPkg-totPkgRec)+'</div></div></div></div>';
+  }
+  if(finTab==="avulsas"){
+    html+='<div class="sum-grid"><div class="sum-card" style="--cc:#2563EB;--bg:#EFF6FF"><div style="font-size:20px;margin-bottom:4px">💵</div><div class="sum-card-val">'+money(totAv)+'</div><div class="sum-card-label">Total faturado</div></div><div class="sum-card" style="--cc:#16A34A;--bg:#F0FDF4"><div style="font-size:20px;margin-bottom:4px">✅</div><div class="sum-card-val">'+money(totRec)+'</div><div class="sum-card-label">Recebido</div></div><div class="sum-card sum-span" style="--cc:#D97706;--bg:#FFFBEB"><div style="font-size:20px;margin-bottom:4px">⏳</div><div class="sum-card-val">'+money(totPend)+'</div><div class="sum-card-label">A receber</div></div></div>';
+    if(!avulsas.length)html+='<div class="empty">Nenhuma sessão avulsa</div>';
+    avulsas.forEach(function(a){
+      html+='<div onclick="push({t:\'apptDetail\',id:\''+a.id+'\'})" style="display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;border:1.5px solid #F1F5F9;cursor:pointer"><div style="width:8px;height:8px;border-radius:50%;background:'+a.color+';flex-shrink:0"></div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+a.name+'</div><div style="font-size:11px;color:#94A3B8">'+a.date.getDate()+' '+MTHS[a.date.getMonth()]+' · '+tstr(a.date)+'</div></div><div style="text-align:right"><div style="font-size:14px;font-weight:900;color:'+(a.paid?"#16A34A":"#D97706")+'">'+money(a.value)+'</div><button onclick="event.stopPropagation();togglePaidFin(\''+a.id+'\')" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;border:none;background:'+(a.paid?"#F0FDF4":"#FFFBEB")+';color:'+(a.paid?"#16A34A":"#D97706")+';margin-top:3px">'+(a.paid?"✅ Pago":"⏳ Pendente")+'</button></div></div>';
+    });
+  }
+  if(finTab==="pacotes"){
+    html+='<div class="sum-grid"><div class="sum-card" style="--cc:#2563EB;--bg:#EFF6FF"><div style="font-size:20px;margin-bottom:4px">📦</div><div class="sum-card-val">'+money(totPkg)+'</div><div class="sum-card-label">Total vendido</div></div><div class="sum-card" style="--cc:#16A34A;--bg:#F0FDF4"><div style="font-size:20px;margin-bottom:4px">✅</div><div class="sum-card-val">'+money(totPkgRec)+'</div><div class="sum-card-label">Utilizado</div></div><div class="sum-card sum-span" style="--cc:#7C3AED;--bg:#F5F3FF"><div style="font-size:20px;margin-bottom:4px">💜</div><div class="sum-card-val">'+money(totPkg-totPkgRec)+'</div><div class="sum-card-label">Saldo restante</div></div></div>';
+    if(!pkgs.length)html+='<div class="empty">Nenhum pacote</div>';
+    pkgs.forEach(function(pkg){
+      var pct=pkg.totalSessions>0?Math.round(pkg.usedSessions/pkg.totalSessions*100):0;
+      var perS=pkg.totalSessions>0?Number(pkg.totalValue||0)/Number(pkg.totalSessions):0;
+      html+='<div onclick="push({t:\'pkgDetail\',id:\''+pkg.id+'\'})" style="background:#fff;border-radius:16px;padding:16px;margin-bottom:10px;border:1.5px solid #F1F5F9;cursor:pointer"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="width:8px;height:8px;border-radius:50%;background:'+pkg.color+'"></div><div style="flex:1"><div style="font-size:14px;font-weight:800">'+pkg.clientName+'</div>'+(pkg.service?'<div style="font-size:12px;color:#64748B">'+pkg.service+'</div>':'')+'</div><span class="badge" style="background:'+(pkg.active?"#F0FDF4":"#F1F5F9")+';color:'+(pkg.active?"#16A34A":"#94A3B8")+'">'+(pkg.active?"Ativo":"Encerrado")+'</span><span style="color:#E2E8F0;font-size:18px">›</span></div>';
+      html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px"><div style="background:#F8F9FB;border-radius:10px;padding:8px 10px"><div style="font-size:10px;color:#94A3B8;font-weight:700;margin-bottom:2px">Total</div><div style="font-size:13px;font-weight:900;color:#2563EB">'+money(pkg.totalValue)+'</div></div><div style="background:#F8F9FB;border-radius:10px;padding:8px 10px"><div style="font-size:10px;color:#94A3B8;font-weight:700;margin-bottom:2px">Utilizado</div><div style="font-size:13px;font-weight:900;color:#16A34A">'+money(pkg.usedSessions*perS)+'</div></div><div style="background:#F8F9FB;border-radius:10px;padding:8px 10px"><div style="font-size:10px;color:#94A3B8;font-weight:700;margin-bottom:2px">/sessão</div><div style="font-size:13px;font-weight:900;color:#7C3AED">'+money(perS)+'</div></div></div>';
+      html+='<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:11px;color:#94A3B8;font-weight:600">'+pkg.usedSessions+'/'+pkg.totalSessions+' sessões · '+pct+'%</span></div>';
+      html+='<div class="progress-bar"><div class="progress-fill" style="background:'+pkg.color+';width:'+pct+'%"></div></div></div>';
+    });
+  }
+  html+='</div>';
+  document.getElementById("screen").innerHTML=html;
+}
+function togglePaidFin(id){appts=appts.map(function(a){return a.id===id?Object.assign({},a,{paid:!a.paid}):a;});saveStorage();renderFinanceiro();}
+var pkgForm={};
+function renderPkgForm(s){
+  pkgForm={clientId:"",clientName:"",service:"",totalSessions:"10",totalValue:"",color:DOTS[0],active:true};
+  setHeader("Novo Pacote",null,pop);renderPkgFormHTML();
+}
+function renderPkgFormHTML(){
+  var f=pkgForm;
+  var perSess=(f.totalSessions&&f.totalValue)?money(Number(f.totalValue)/Number(f.totalSessions)):null;
+  var html='<div style="padding:14px 16px;padding-bottom:90px"><div style="display:flex;flex-direction:column;gap:14px">';
+  if(clients.length){html+='<div class="field"><label>Paciente</label><div class="chip-wrap">';clients.forEach(function(c){html+='<button class="chip'+(f.clientId===c.id?" active":"")+'" style="--cc:'+c.color+'" onclick="pkgForm.clientId=\''+c.id+'\';pkgForm.clientName='+JSON.stringify(c.name)+';pkgForm.color=\''+c.color+'\';renderPkgFormHTML()">'+c.name.split(" ")[0]+'</button>';});html+='</div></div>';}
+  if(!f.clientId)html+='<div class="field"><label>Nome *</label><input type="text" value="'+esc(f.clientName)+'" oninput="pkgForm.clientName=this.value" placeholder="Nome da paciente"></div>';
+  html+='<div class="field"><label>Serviço</label><input type="text" value="'+esc(f.service)+'" oninput="pkgForm.service=this.value" placeholder="Ex: Drenagem linfática…"></div>';
+  html+='<div class="field-grid"><div class="field" style="margin-bottom:0"><label>Nº sessões *</label><input type="number" value="'+esc(f.totalSessions)+'" oninput="pkgForm.totalSessions=this.value;renderPkgFormHTML()" placeholder="10"></div><div class="field" style="margin-bottom:0"><label>Valor total *</label><input type="number" value="'+esc(f.totalValue)+'" oninput="pkgForm.totalValue=this.value;renderPkgFormHTML()" placeholder="1500"></div></div>';
+  if(perSess)html+='<div style="padding:10px 14px;background:#F0FDF4;border-radius:12px;font-size:13px;color:#16A34A;font-weight:700">💡 '+perSess+' por sessão</div>';
+  html+='<div class="field"><label>Cor</label><div class="dot-pick">';
+  DOTS.forEach(function(c){html+='<button class="dot-btn'+(f.color===c?" active":"")+'" style="background:'+c+'" onclick="pkgForm.color=\''+c+'\';renderPkgFormHTML()"></button>';});
+  html+='</div></div></div></div>';
+  var ok=f.clientName.trim()&&f.totalValue;
+  html+='<div class="sticky-btn"><button class="btn '+(ok?"btn-green":"btn-disabled")+'" onclick="savePkg()">Criar Pacote</button></div>';
+  document.getElementById("screen").innerHTML=html;
+}
+function savePkg(){
+  var f=pkgForm;if(!f.clientName.trim()||!f.totalValue)return;
+  pkgs.push({id:uid(),clientId:f.clientId,clientName:f.clientName,service:f.service,totalSessions:Number(f.totalSessions)||0,usedSessions:0,totalValue:f.totalValue,color:f.color,active:true,createdAt:new Date().toISOString()});
+  saveStorage();pop();
+}
+function renderPkgDetail(s){
+  var p=pkgs.find(function(x){return x.id===s.id;});
+  if(!p){setHeader("Pacote",null,pop);document.getElementById("screen").innerHTML='<div style="padding:20px;color:#94A3B8">Não encontrado.</div>';return;}
+  var pct=p.totalSessions>0?Math.round(p.usedSessions/p.totalSessions*100):0;
+  var perS=p.totalSessions>0?Number(p.totalValue||0)/Number(p.totalSessions):0;
+  setHeader(p.clientName,p.service||"Pacote",pop);
+  var html='<div style="padding:14px 16px;padding-bottom:30px"><div class="card card-pad" style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;margin-bottom:12px"><span style="font-size:14px;font-weight:700;color:#64748B">Sessões utilizadas</span><span style="font-size:16px;font-weight:900">'+p.usedSessions+' / '+p.totalSessions+'</span></div><div style="height:10px;border-radius:10px;background:#F1F5F9;overflow:hidden;margin-bottom:8px"><div style="height:100%;border-radius:10px;background:'+p.color+';width:'+pct+'%"></div></div><div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:#94A3B8">'+pct+'% utilizado</span><span style="font-size:14px;font-weight:900;color:#2563EB">'+money(p.totalValue)+'</span></div><div style="margin-top:6px;font-size:12px;color:#94A3B8">'+money(perS)+' por sessão</div></div>';
+  html+='<div style="display:flex;gap:10px"><button onclick="togglePkg(\''+p.id+'\')" style="flex:1;padding:13px;background:'+(p.active?"#FFFBEB":"#F0FDF4")+';border:1.5px solid '+(p.active?"#FED7AA":"#BBF7D0")+';border-radius:14px;color:'+(p.active?"#D97706":"#16A34A")+';font-weight:800;font-size:14px;">'+(p.active?"⏸ Encerrar":"▶ Reativar")+'</button><button onclick="removePkg(\''+p.id+'\')" style="flex:1;padding:13px;background:#FFF1F2;border:1.5px solid #FECDD3;border-radius:14px;color:#E11D48;font-weight:800;font-size:14px;">🗑 Excluir</button></div></div>';
+  document.getElementById("screen").innerHTML=html;
+}
+function togglePkg(id){pkgs=pkgs.map(function(p){return p.id===id?Object.assign({},p,{active:!p.active}):p;});saveStorage();push({t:"pkgDetail",id:id});stack.splice(stack.length-2,1);render();}
+function removePkg(id){pkgs=pkgs.filter(function(p){return p.id!==id;});appts=appts.map(function(a){return a.pkgId===id?Object.assign({},a,{pkgId:"",type:"avulsa"}):a;});saveStorage();stack=[];tab="financeiro";render();}
+function renderConfig(){
+  setHeader("Configurações",null,null);
+  var html='<div style="padding:14px;padding-bottom:30px"><div class="card" style="margin-bottom:16px"><div style="padding:14px 16px;border-bottom:1px solid #F1F5F9"><div style="font-size:14px;font-weight:800">💾 Backup</div><div style="font-size:12px;color:#94A3B8;margin-top:2px">Salve seus dados para não perder nada</div></div>';
+  html+='<button onclick="push({t:\'backup\'})" style="width:100%;padding:14px 16px;background:#fff;border:none;display:flex;align-items:center;gap:12px;cursor:pointer;border-bottom:1px solid #F1F5F9;text-align:left"><span style="font-size:22px">⬇️</span><div style="flex:1;text-align:left"><div style="font-size:14px;font-weight:700">Exportar backup</div><div style="font-size:12px;color:#94A3B8">Copie para o app Notas</div></div><span style="font-size:18px;color:#E2E8F0">›</span></button>';
+  html+='<button onclick="push({t:\'backup\'})" style="width:100%;padding:14px 16px;background:#fff;border:none;display:flex;align-items:center;gap:12px;cursor:pointer;text-align:left"><span style="font-size:22px">⬆️</span><div style="flex:1;text-align:left"><div style="font-size:14px;font-weight:700">Importar backup</div><div style="font-size:12px;color:#94A3B8">Cole o backup salvo nas Notas</div></div><span style="font-size:18px;color:#E2E8F0">›</span></button></div>';
+  html+='<div class="card card-pad" style="margin-bottom:16px"><div style="font-size:14px;font-weight:800;margin-bottom:12px">📊 Estatísticas</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+  [["👤","Pacientes",clients.length],["📅","Agendamentos",appts.length],["📦","Pacotes",pkgs.length],["✅","Realizadas",appts.filter(function(a){return a.date<today;}).length]].forEach(function(item){html+='<div style="background:#F8F9FB;border-radius:12px;padding:12px 14px"><div style="font-size:18px;margin-bottom:4px">'+item[0]+'</div><div style="font-size:22px;font-weight:900">'+item[2]+'</div><div style="font-size:11px;color:#94A3B8;font-weight:600;margin-top:1px">'+item[1]+'</div></div>';});
+  html+='</div></div><div style="padding:14px 16px;background:#F5F3FF;border-radius:16px"><div style="font-size:13px;font-weight:800;color:#7C3AED;margin-bottom:4px">💡 Usar como app no iPhone</div><div style="font-size:12px;color:#6D28D9;line-height:1.6">Abra no <strong>Safari</strong> → toque em <strong>Compartilhar</strong> → <strong>"Adicionar à Tela de Início"</strong></div></div></div>';
+  document.getElementById("screen").innerHTML=html;
+}
+var backupMode="export";var importText="";
+function renderBackup(){
+  var data=JSON.stringify({appts:appts.map(function(a){return Object.assign({},a,{date:a.date.toISOString()});}),pkgs:pkgs,clients:clients});
+  setHeader("Backup",null,pop);
+  var html='<div style="padding:14px 16px;padding-bottom:30px"><div style="display:flex;gap:6px;margin-bottom:16px"><button onclick="backupMode=\'export\';renderBackup()" style="flex:1;padding:9px;border-radius:11px;border:1.5px solid '+(backupMode==="export"?"#2563EB":"#E2E8F0")+';background:'+(backupMode==="export"?"#EFF6FF":"#fff")+';color:'+(backupMode==="export"?"#2563EB":"#64748B")+';font-weight:700;font-size:13px">⬇️ Exportar</button><button onclick="backupMode=\'import\';renderBackup()" style="flex:1;padding:9px;border-radius:11px;border:1.5px solid '+(backupMode==="import"?"#16A34A":"#E2E8F0")+';background:'+(backupMode==="import"?"#F0FDF4":"#fff")+';color:'+(backupMode==="import"?"#16A34A":"#64748B")+';font-weight:700;font-size:13px">⬆️ Importar</button></div>';
+  if(backupMode==="export"){
+    html+='<div style="background:#FFFBEB;border-radius:14px;padding:14px 16px;margin-bottom:14px;border:1px solid #FED7AA"><div style="font-size:13px;font-weight:800;color:#D97706;margin-bottom:6px">📋 Como fazer o backup:</div><div style="font-size:12px;color:#92400E;line-height:1.7">1. Toque em <strong>Copiar</strong> abaixo<br>2. Abra o app <strong>Notas</strong><br>3. Crie uma nota nova e <strong>cole</strong><br>4. Salve a nota</div></div>';
+    html+='<textarea id="backupTA" readonly onclick="this.select()" style="width:100%;height:160px;padding:12px;background:#F8F9FB;border:1.5px solid #E2E8F0;border-radius:12px;font-size:11px;font-family:monospace;color:#334155;resize:none;outline:none;line-height:1.4">'+esc(data)+'</textarea>';
+    html+='<button onclick="doCopy()" style="width:100%;margin-top:10px;padding:14px;background:#2563EB;border:none;border-radius:14px;color:#fff;font-weight:900;font-size:15px;cursor:pointer">📋 Copiar Backup</button>';
+  }else{
+    html+='<div style="background:#F0FDF4;border-radius:14px;padding:14px 16px;margin-bottom:14px;border:1px solid #BBF7D0"><div style="font-size:13px;font-weight:800;color:#16A34A;margin-bottom:4px">Como restaurar:</div><div style="font-size:12px;color:#166534;line-height:1.6">Abra as Notas, copie o texto do backup e cole aqui.</div></div>';
+    html+='<textarea id="importTA" oninput="importText=this.value" placeholder="Cole aqui o texto do backup..." style="width:100%;height:160px;padding:12px;background:#F8F9FB;border:1.5px solid #E2E8F0;border-radius:12px;font-size:11px;font-family:monospace;color:#334155;resize:none;outline:none;line-height:1.4">'+esc(importText)+'</textarea>';
+    html+='<button onclick="doImport()" style="width:100%;margin-top:10px;padding:14px;background:#16A34A;border:none;border-radius:14px;color:#fff;font-weight:900;font-size:15px;cursor:pointer">✅ Restaurar Backup</button>';
+  }
+  html+='</div>';
+  document.getElementById("screen").innerHTML=html;
+}
+function doCopy(){
+  var ta=document.getElementById("backupTA");ta.select();
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value).then(function(){alert("Copiado! Cole no app Notas.");}).catch(function(){alert("Selecione o texto e copie manualmente.");});}
+  else{try{document.execCommand("copy");alert("Copiado!");}catch(e){alert("Selecione e copie manualmente.");}}
+}
+function doImport(){
+  var txt=importText.trim();if(!txt){alert("Cole o texto do backup primeiro.");return;}
+  try{
+    var d=JSON.parse(txt);
+    if(d.appts)appts=d.appts.map(function(a){return Object.assign({},a,{date:new Date(a.date)});});
+    if(d.pkgs)pkgs=d.pkgs;
+    if(d.clients)clients=d.clients;
+    saveStorage();importText="";stack=[];tab="agenda";
+    alert("Backup restaurado!");render();
+  }catch(e){alert("Texto inválido. Copie o backup completo.");}
+}
+loadStorage();
+render();
+</script>
+</body>
+</html>
